@@ -59,8 +59,7 @@ jobs:
         run: |
           copilot -p "$(cat prompt.md)" \
             --allow-tool 'write' \
-            --allow-tool 'shell(php)' \
-            --allow-tool 'shell(symfony)'
+            --allow-tool 'shell'
 
       - name: Upload generated source
         if: always()

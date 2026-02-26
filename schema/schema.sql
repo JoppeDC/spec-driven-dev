@@ -16,3 +16,19 @@ CREATE TABLE comment (
     body       VARCHAR(2000) NOT NULL,
     created_at TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
+
+CREATE TYPE activity_action AS ENUM (
+    'task_created',
+    'task_updated',
+    'subtask_created',
+    'comment_added',
+    'comment_deleted'
+);
+
+CREATE TABLE activity_log (
+    id         SERIAL PRIMARY KEY,
+    task_id    INTEGER         NOT NULL REFERENCES task(id) ON DELETE CASCADE,
+    action     activity_action NOT NULL,
+    changes    JSONB           NULL,
+    created_at TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
