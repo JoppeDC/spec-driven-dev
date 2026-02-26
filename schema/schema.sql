@@ -2,6 +2,7 @@ CREATE TYPE task_status AS ENUM ('todo', 'in_progress', 'done');
 
 CREATE TABLE task (
     id          SERIAL PRIMARY KEY,
+    parent_id   INTEGER       NULL REFERENCES task(id) ON DELETE CASCADE,
     title       VARCHAR(255)  NOT NULL,
     description VARCHAR(1000) NULL,
     status      task_status   NOT NULL DEFAULT 'todo',
