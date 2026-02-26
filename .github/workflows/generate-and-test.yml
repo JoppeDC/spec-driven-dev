@@ -1,0 +1,71 @@
+name: Generate & Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  generate-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: "!ChangeMe!"
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pdo, pdo_pgsql
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Create test database and apply schema
+        env:
+          PGPASSWORD: "!ChangeMe!"
+        run: |
+          psql -h 127.0.0.1 -U app -d app -c "CREATE DATABASE app_test OWNER app;"
+          psql -h 127.0.0.1 -U app -d app_test -f schema/schema.sql
+
+      - name: Generate application code and validate
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          copilot -p "$(cat prompt.md)" \
+            --allow-tool 'write' \
+            --allow-tool 'shell(php)' \
+            --allow-tool 'shell(symfony)'
+
+      - name: Upload generated source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-src
+          path: src/
+          if-no-files-found: warn
