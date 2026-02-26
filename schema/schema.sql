@@ -9,3 +9,10 @@ CREATE TABLE task (
     created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE comment (
+    id         SERIAL PRIMARY KEY,
+    task_id    INTEGER       NOT NULL REFERENCES task(id) ON DELETE CASCADE,
+    body       VARCHAR(2000) NOT NULL,
+    created_at TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+);
