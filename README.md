@@ -2,6 +2,8 @@
 
 A proof-of-concept for spec-driven development: feature specs and tests are written by ~hand~ AI, and an AI agent generates the application code from them.
 
+This repository goes hand-in-hand with [this blogpost](https://joppe.dev/2026/02/26/i-deleted-my-source-code/).
+
 ## How it works
 
 1. **Specs** (`specs/`) define the API — entities, endpoints, validation rules, and business rules
