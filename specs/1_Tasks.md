@@ -24,154 +24,40 @@ remove tasks as needed.
 
 ### `GET /api/tasks`
 
-Returns all top-level tasks (tasks with no parent). Subtasks are excluded.
-
-Optional query parameter:
-- `status` — filter by status (`todo`, `in_progress`, `done`)
-
-**Response 200:**
-```json
-[
-  {
-    "id": 1,
-    "title": "Write tests",
-    "description": null,
-    "status": "todo",
-    "created_at": "2026-02-26T10:00:00+00:00",
-    "updated_at": "2026-02-26T10:00:00+00:00"
-  }
-]
-```
-
----
+Returns all top-level tasks (tasks with no parent) in flat shape. Subtasks are
+excluded. Optional query parameter `status` filters by status.
 
 ### `POST /api/tasks`
 
-Creates a new top-level task.
-
-**Request body:**
-```json
-{
-  "title": "Write tests",
-  "description": "Optional longer description"
-}
-```
-
-**Response 201:**
-```json
-{
-  "id": 1,
-  "title": "Write tests",
-  "description": "Optional longer description",
-  "status": "todo",
-  "subtasks": [],
-  "created_at": "2026-02-26T10:00:00+00:00",
-  "updated_at": "2026-02-26T10:00:00+00:00"
-}
-```
-
-**Response 422** (validation failure):
-```json
-{
-  "errors": {
-    "title": "This value should not be blank."
-  }
-}
-```
-
----
+Creates a new top-level task. Accepts `title` (required) and `description`
+(optional). Returns 201 with the created task in full shape.
 
 ### `GET /api/tasks/{id}`
 
-Returns a single task including its subtasks.
-
-**Response 200:**
-```json
-{
-  "id": 1,
-  "title": "Write tests",
-  "description": null,
-  "status": "todo",
-  "subtasks": [
-    {
-      "id": 2,
-      "title": "Write unit tests",
-      "description": null,
-      "status": "todo",
-      "created_at": "2026-02-26T10:00:00+00:00",
-      "updated_at": "2026-02-26T10:00:00+00:00"
-    }
-  ],
-  "created_at": "2026-02-26T10:00:00+00:00",
-  "updated_at": "2026-02-26T10:00:00+00:00"
-}
-```
-
-**Response 404:**
-```json
-{ "error": "Task not found." }
-```
-
----
+Returns a single task in full shape (includes subtasks). Returns 404 if not
+found.
 
 ### `POST /api/tasks/{id}/subtasks`
 
-Creates a subtask under the given task.
-
-The parent must exist and must not itself be a subtask — only one level of
-nesting is allowed.
-
-**Request body:** same as `POST /api/tasks`
-
-**Response 201:** the created subtask in flat shape (no `subtasks` key).
-
-**Response 404:** parent task not found.
-
-**Response 422:** parent is itself a subtask, or validation fails.
-
----
+Creates a subtask under the given task. Same request body as `POST /api/tasks`.
+Returns 201 with the created subtask in flat shape. Returns 404 if parent not
+found, 422 if parent is itself a subtask or validation fails.
 
 ### `GET /api/tasks/{id}/subtasks`
 
-Returns all subtasks of the given task.
-
-**Response 200:** array of subtasks in flat shape (no `subtasks` key).
-
-**Response 404:** parent task not found.
-
----
+Returns all subtasks of the given task in flat shape. Returns 404 if parent not
+found.
 
 ### `PATCH /api/tasks/{id}`
 
-Partially updates a task. Only provided fields are changed.
-
-**Request body** (all fields optional):
-```json
-{
-  "title": "Updated title",
-  "description": "Updated description",
-  "status": "in_progress"
-}
-```
-
-**Response 200:** updated task in full shape (includes `subtasks`).
-
-**Response 404:** task not found.
-
-**Response 422:** validation failure, or attempting to set status `done` on a
-task that has subtasks not yet in `done` status.
-
----
+Partially updates a task. Only provided fields are changed. Accepts `title`,
+`description`, and `status` — all optional. Returns 200 with updated task in
+full shape. Returns 404 if not found, 422 on validation failure or if setting
+status to `done` while subtasks are not all `done`.
 
 ### `DELETE /api/tasks/{id}`
 
-Deletes a task and all its subtasks.
-
-**Response 204:** no body.
-
-**Response 404:** task not found.
-
----
+Deletes a task and all its subtasks. Returns 204. Returns 404 if not found.
 
 ## Validation Rules
 

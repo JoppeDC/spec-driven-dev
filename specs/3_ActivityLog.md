@@ -42,33 +42,7 @@ activity log entries.
 ### `GET /api/tasks/{id}/activity`
 
 Returns all activity log entries for the given task, ordered by `created_at`
-ascending.
-
-**Response 200:**
-```json
-[
-  {
-    "id": 1,
-    "task_id": 42,
-    "action": "task_created",
-    "changes": { "title": "Write tests" },
-    "created_at": "2026-02-26T10:00:00+00:00"
-  },
-  {
-    "id": 2,
-    "task_id": 42,
-    "action": "task_updated",
-    "changes": {
-      "status": { "old": "todo", "new": "in_progress" }
-    },
-    "created_at": "2026-02-26T10:01:00+00:00"
-  }
-]
-```
-
-**Response 404:** task not found.
-
----
+ascending. Returns 404 if task not found.
 
 ## Business Rules
 

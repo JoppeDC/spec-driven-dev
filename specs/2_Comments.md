@@ -21,67 +21,19 @@ comments.
 
 ### `POST /api/tasks/{id}/comments`
 
-Creates a comment on the given task.
-
-**Request body:**
-```json
-{
-  "body": "This looks good to me."
-}
-```
-
-**Response 201:**
-```json
-{
-  "id": 1,
-  "task_id": 42,
-  "body": "This looks good to me.",
-  "created_at": "2026-02-26T10:00:00+00:00"
-}
-```
-
-**Response 404:** task not found.
-
-**Response 422** (validation failure):
-```json
-{
-  "errors": {
-    "body": "This value should not be blank."
-  }
-}
-```
-
----
+Creates a comment on the given task. Accepts `body` (required). Returns 201
+with the created comment. Returns 404 if task not found, 422 on validation
+failure.
 
 ### `GET /api/tasks/{id}/comments`
 
 Returns all comments for the given task, ordered by `created_at` ascending.
-
-**Response 200:**
-```json
-[
-  {
-    "id": 1,
-    "task_id": 42,
-    "body": "This looks good to me.",
-    "created_at": "2026-02-26T10:00:00+00:00"
-  }
-]
-```
-
-**Response 404:** task not found.
-
----
+Returns 404 if task not found.
 
 ### `DELETE /api/tasks/{taskId}/comments/{commentId}`
 
-Deletes a single comment.
-
-**Response 204:** no body.
-
-**Response 404:** task not found, or comment not found on that task.
-
----
+Deletes a single comment. Returns 204. Returns 404 if task or comment not
+found.
 
 ## Validation Rules
 
